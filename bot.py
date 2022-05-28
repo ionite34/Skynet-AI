@@ -66,8 +66,7 @@ class BotClient(discord.Client):
             print(f'Returned rp channel: {rep_ch}, full string: {full_str}')
             # Send the message to the rep_ch channel
             channel = self.get_channel(int(rep_ch))
-            print(f'Found channel: {channel}')
-            # await channel.send(full_str)
+            await channel.send(full_str)
             return
 
         # Query
@@ -79,8 +78,8 @@ class BotClient(discord.Client):
             if case == 'SPAM' and not is_new_user(message.author):
                 continue
             # Otherwise, get the report channel and string
-            rep_ch, full_str = self.reporter.report(message.guild, message.channel, message.id,
+            rep_ch, full_str = self.reporter.report(message.guild.id, message.channel.id, message.id,
                                                     message.author.id, case, detect_dict)
             # Send the message to the rep_ch channel
-            channel = self.get_channel(rep_ch)
+            channel = self.get_channel(int(rep_ch))
             await channel.send(full_str)
