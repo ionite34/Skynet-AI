@@ -39,7 +39,7 @@ class Reporter:
         current_time = datetime.now()
 
         # Add report to user
-        db[guild_id][user_id][msg_id] = (current_time, reason, details)
+        db[guild_id][user_id][msg_id] = (current_time, reason)
 
     def _check_reported(self, guild_id, user_id, reason):
         """
@@ -96,6 +96,12 @@ class Reporter:
         return channel_id
 
     def report(self, guild_id, channel_id, msg_id, user_id, reason, reason_dict):
+        # Converting to string
+        guild_id = str(guild_id)
+        channel_id = str(channel_id)
+        msg_id = str(msg_id)
+        user_id = str(user_id)
+
         # Check if already reported within time limit
         if self._check_reported(guild_id, user_id, reason):
             return
