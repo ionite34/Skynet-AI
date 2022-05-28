@@ -54,16 +54,10 @@ class BotClient(discord.Client):
         if not message.content:
             return
 
-        # query
+        # Query
         detects, detect_dict = self.analyze(message.content)
 
-        # Special cases
-        special_cases = [
-            'SPAM',
-            'SEVERE_TOXICITY',
-            'INFLAMMATORY',
-            'THREAT',
-        ]
+        # Report cases
         for case in detects:
             # Special case for SPAM, apply only to new users
             if case == 'SPAM' and not is_new_user(message.author):
