@@ -77,7 +77,7 @@ class Reporter:
                 return self.report_channel[guild_id][1]
 
         # Otherwise, fetch new from API
-        res = requests.get(f'https://sentrybot.gg/api/guilds/:{guild_id}/integration_channel')
+        res = requests.get(f'https://sentrybot.gg/api/guilds/{guild_id}/integration_channel')
         if not res or res.status_code == 404:
             warn(f'Report Channel request returned 404 for guild [{guild_id}]')
             return None
