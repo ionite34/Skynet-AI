@@ -63,9 +63,11 @@ class BotClient(discord.Client):
                   f' Author ID {message.author.id}, Case {case}, Case Dict {detect_dict}')
             rep_ch, full_str = self.reporter.report(message.guild.id, message.channel.id, message.id,
                                                     message.author.id, case, detect_dict)
+            print(f'Returned rp channel: {rep_ch}, full string: {full_str}')
             # Send the message to the rep_ch channel
-            channel = self.get_channel(rep_ch)
-            await channel.send(full_str)
+            channel = self.get_channel(int(rep_ch))
+            print(f'Found channel: {channel}')
+            # await channel.send(full_str)
             return
 
         # Query
