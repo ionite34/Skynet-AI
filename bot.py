@@ -3,12 +3,8 @@ from warnings import warn
 
 import discord
 from datetime import datetime, timedelta
-# from replace import Replacer
 from analyzer import Analyzer
 from reporter import Reporter
-
-# Role tag (AI)
-ROLE_AI_TAG = "<@&906973835138564116>"
 
 
 def is_new_user(member):
