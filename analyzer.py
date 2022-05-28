@@ -56,6 +56,7 @@ class Analyzer:
         scores_map = OrderedDict()
         exceeded = []
         cb_exceed_15 = 0
+        cb_exceed_15_1_over_50 = False
         for attribute in scores:
             try:
                 confidence = scores[attribute]['summaryScore']['value']
@@ -67,8 +68,10 @@ class Analyzer:
                 exceeded.append(attribute)  # Add if over threshold
             if attribute in combined_detect and confidence > 0.15:
                 cb_exceed_15 += confidence
+                if confidence >= 0.5:
+                    cb_exceed_15_1_over_50 = True
 
-        if cb_exceed_15 >= 0.75 and len(exceeded) == 0:
+        if cb_exceed_15_1_over_50 and cb_exceed_15 >= 0.75 and len(exceeded) == 0:
             exceeded.append('MULTI_TOXICITY')
             scores_map['MULTI_TOXICITY'] = cb_exceed_15
 
