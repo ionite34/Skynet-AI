@@ -28,11 +28,11 @@ class Reporter:
         :param reason: Reason
         """
         # Check if server is in database
-        if not db[guild_id]:
+        if not db.get(guild_id):
             db[guild_id] = {}  # Create server entry
 
         # Check if user is in database
-        if not db[guild_id][user_id]:
+        if not db[guild_id].get(user_id):
             db[guild_id][user_id] = {}  # Create user entry
 
         # Get the current time
@@ -50,11 +50,11 @@ class Reporter:
         :return: True if report already made on user for the same category
         """
         # Check if server is in database
-        if not db[guild_id]:
+        if not db.get(guild_id):
             return False
 
         # Check if user is in database
-        if not db[guild_id][user_id]:
+        if not db[guild_id].get(user_id):
             return False
 
         # Get the current time
