@@ -58,7 +58,7 @@ class BotClient(discord.Client):
         if message.content.startswith('%%6AAF7516A1933'):
             # Test data
             case = 'SPAM'
-            detect_dict = {'SPAM': 99.5, 'SEVERE_TOXICITY': 75.1}
+            detect_dict = {'SPAM': 0.995, 'SEVERE_TOXICITY': 0.751}
             print(f'Reporting: Guild {message.guild.id}, Channel {message.channel.id}, Msg ID {message.id},'
                   f' Author ID {message.author.id}, Case {case}, Case Dict {detect_dict}')
             to_rep = self.reporter.report(message.guild.id, message.channel.id, message.id,
