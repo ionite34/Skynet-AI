@@ -1,9 +1,11 @@
 {
     "Attributes": {
-        "SEVERE_TOXICITY": 0.79,
-        "IDENTITY_ATTACK": 0.85,
-        "SPAM": 0.82,
+        "SEVERE_TOXICITY": 0.65,
+        "TOXICITY": 0.98,
+        "IDENTITY_ATTACK": 0.55,
+        "INFLAMMATORY": 0.82,
+        "INSULT": 0.95,
         "THREAT": 0.82,
-        "INFLAMMATORY": 0.82
+        "SPAM": 0.82
     }
 }
