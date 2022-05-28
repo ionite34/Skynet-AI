@@ -19,7 +19,7 @@ class Reporter:
         self.report_channel = {}  # Server ID -> (Time Updated, Channel ID)
 
     @staticmethod
-    def _record_report(guild_id, user_id, msg_id, reason, details):
+    def _record_report(guild_id, user_id, msg_id, reason):
         """
         Records a report to database
 
@@ -39,7 +39,7 @@ class Reporter:
         current_time = datetime.now()
 
         # Add report to user
-        db[guild_id][user_id][msg_id] = (current_time, reason)
+        db[guild_id][user_id][msg_id] = [current_time, reason]
 
     def _check_reported(self, guild_id, user_id, reason):
         """
