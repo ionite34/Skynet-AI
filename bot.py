@@ -61,8 +61,11 @@ class BotClient(discord.Client):
             detect_dict = {'SPAM': 99.5, 'SEVERE_TOXICITY': 75.1}
             print(f'Reporting: Guild {message.guild.id}, Channel {message.channel.id}, Msg ID {message.id},'
                   f' Author ID {message.author.id}, Case {case}, Case Dict {detect_dict}')
-            rep_ch, full_str = self.reporter.report(message.guild.id, message.channel.id, message.id,
-                                                    message.author.id, case, detect_dict)
+            to_rep = self.reporter.report(message.guild.id, message.channel.id, message.id,
+                                          message.author.id, case, detect_dict)
+            if not to_rep:
+                return
+            rep_ch, full_str = to_rep
             print(f'Returned rp channel: {rep_ch}, full string: {full_str}')
             # Send the message to the rep_ch channel
             channel = self.get_channel(int(rep_ch))
@@ -78,8 +81,12 @@ class BotClient(discord.Client):
             if case == 'SPAM' and not is_new_user(message.author):
                 continue
             # Otherwise, get the report channel and string
-            rep_ch, full_str = self.reporter.report(message.guild.id, message.channel.id, message.id,
-                                                    message.author.id, case, detect_dict)
+            to_rep = self.reporter.report(message.guild.id, message.channel.id, message.id,
+                                          message.author.id, case, detect_dict)
+            if not to_rep:
+                return
+            rep_ch, full_str = to_rep
+
             # Send the message to the rep_ch channel
             channel = self.get_channel(int(rep_ch))
             await channel.send(full_str)
