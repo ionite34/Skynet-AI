@@ -73,6 +73,6 @@ class Analyzer:
             scores_map['MULTI_TOXICITY'] = cb_exceed_15
 
         # Sort by confidence
-        scores_map = sorted(scores_map.items(), key=lambda x: x[1], reverse=True)
+        scores_map = OrderedDict(sorted(scores_map.items(), key=lambda x: x[1], reverse=True))
 
         return exceeded, scores_map
