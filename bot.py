@@ -59,9 +59,9 @@ class BotClient(discord.Client):
             # Test data
             case = 'SPAM'
             detect_dict = {'SPAM': 99.5, 'SEVERE_TOXICITY': 75.1}
-            print(f'Reporting: Guild {message.guild}, Channel {message.channel}, Msg ID {message.id},'
+            print(f'Reporting: Guild {message.guild.id}, Channel {message.channel.id}, Msg ID {message.id},'
                   f' Author ID {message.author.id}, Case {case}, Case Dict {detect_dict}')
-            rep_ch, full_str = self.reporter.report(message.guild, message.channel, message.id,
+            rep_ch, full_str = self.reporter.report(message.guild.id, message.channel.id, message.id,
                                                     message.author.id, case, detect_dict)
             # Send the message to the rep_ch channel
             channel = self.get_channel(rep_ch)
