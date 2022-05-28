@@ -122,7 +122,7 @@ class Reporter:
         # Construct the report json
         mention = f'<@{self.report_bot_id}>'
         perc_reason = round(reason_dict[reason] * 100, 1)
-        report_msg = f"{reason} was detected with {perc_reason}% certainty.\n"
+        report_msg = f"{reason} was detected with {perc_reason}% certainty.\n\n"
         report_msg += f"Message: {msg_text}\n\n"
         for attribute, prob in reason_dict.items():
             if prob < 0.3:
