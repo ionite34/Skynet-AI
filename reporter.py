@@ -112,7 +112,7 @@ class Reporter:
             return  # Skip report if no valid channel
 
         # Record report
-        self._record_report(guild_id, user_id, msg_id, reason, reason_dict)
+        self._record_report(guild_id, user_id, msg_id, reason)
 
         # Construct the report json
         mention = f'<@{self.report_bot_id}>'
