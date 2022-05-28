@@ -1,4 +1,5 @@
 # Reporting
+import json
 from warnings import warn
 from datetime import datetime, timedelta
 import requests
@@ -8,6 +9,8 @@ from requests import JSONDecodeError
 
 class Reporter:
     def __init__(self):
+        # Bot to report to
+        self.report_bot_id = '821973078112206891'  # Sentry Bot ID
         # Time limit for repeat reports
         self.time_limit = timedelta(minutes=10)
         # Whether time limit is per category
@@ -92,15 +95,41 @@ class Reporter:
         channel_id = parsed['data']['channel_id']  # Get channel ID
         return channel_id
 
-    def report(self, guild_id, user_id, msg_id, reason, details):
+    def report(self, guild_id, channel_id, msg_id, user_id, reason, reason_dict):
         # Check if already reported within time limit
         if self._check_reported(guild_id, user_id, reason):
             return
 
         # Get report channel
-        channel_id = self._get_report_channel(guild_id)
-        if not channel_id:
+        report_channel_id = self._get_report_channel(guild_id)
+        if not report_channel_id:
             return  # Skip report if no valid channel
 
         # Record report
-        self._record_report(guild_id, user_id, msg_id, reason, details)
+        self._record_report(guild_id, user_id, msg_id, reason, reason_dict)
+
+        # Construct the report json
+        mention = f'<@{self.report_bot_id}>'
+        perc_reason = round(reason_dict[reason] * 100, 1)
+        report_msg = f"{reason} was detected with {perc_reason}% certainty.\n\n"
+        for attribute, prob in reason_dict.items():
+            if prob < 0.3:
+                continue  # Skip low probability attributes
+            perc = round(prob * 100, 2)
+            report_msg += f'{attribute}: {perc}% Confidence\n'
+        report = {
+            "jsonrpc": "2.0",
+            "id": f"{msg_id}",
+            "method": "report",
+            "params": {
+                "channel_id": f"{channel_id}",
+                "message_id": f"{msg_id}",
+                "user_id": f"{user_id}",
+                "reason": report_msg,
+            }
+        }
+        json_str = json.dumps(report)  # Convert to JSON string
+        full_str = f'{mention} {json_str}'
+
+        # Tuple of (report_channel, full_str)
+        return report_channel_id, full_str

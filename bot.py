@@ -2,7 +2,7 @@ import re
 from warnings import warn
 
 import discord
-
+from datetime import datetime, timedelta
 # from replace import Replacer
 from analyzer import Analyzer
 from reporter import Reporter
@@ -11,21 +11,22 @@ from reporter import Reporter
 ROLE_AI_TAG = "<@&906973835138564116>"
 
 
+def is_new_user(member):
+    """
+    Checks if the member is a new user.
+    Defined as joined the server within the last 7 days
+    """
+    # True if joined the server within the last 7 days
+    if member.joined_at > (datetime.now() - timedelta(days=7)):
+        return True
+    return False
+
+
 class BotClient(discord.Client):
     def __init__(self):
         super().__init__()
         self.analyze = Analyzer()
-        self.emoji_map = {
-            'TOXICITY': '😠',
-            'SEVERE_TOXICITY': '🤬',
-            'IDENTITY_ATTACK': '👿',
-            'SPAM': '🚫',
-            'THREAT': '🔪',
-            'INFLAMMATORY': '💣',
-            'SEXUALLY_EXPLICIT': '🍆',
-            'FLIRTATION': '💖',
-            'INSULT': '💢',
-        }
+        self.reporter = Reporter()
 
     async def on_ready(self):
         print('Logged in as')
@@ -58,28 +59,22 @@ class BotClient(discord.Client):
             return
 
         # query
-        detects, map = self.analyze(message.content)
-
-        # Reacts
-        for detect in detects:
-            emoji = self.emoji_map.get(detect)
-            if emoji:
-                await message.add_reaction(emoji)
-            else:
-                warn(f'No emoji found for {detect}')
+        detects, detect_dict = self.analyze(message.content)
 
         # Special cases
-        special_cases = {
-            'SPAM': 'Spam',
-            'SEVERE_TOXICITY': 'Severely Toxic',
-            'INFLAMMATORY': 'Inflammatory',
-            'THREAT': 'Threatening',
-        }
-        for case in special_cases:
-            if case in detects:
-                prob = map[case]
-                prob = round(prob * 100, 1)
-                c_text = special_cases[case]
-                await message.reply(f'⚠️ Warning: Your Message was detected '
-                                    f'as {c_text} with {prob}% Confidence.')
-                return
+        special_cases = [
+            'SPAM',
+            'SEVERE_TOXICITY',
+            'INFLAMMATORY',
+            'THREAT',
+        ]
+        for case in detects:
+            # Special case for SPAM, apply only to new users
+            if case == 'SPAM' and not is_new_user(message.author):
+                continue
+            # Otherwise, get the report channel and string
+            rep_ch, full_str = self.reporter.report(message.guild, message.channel, message.id,
+                                                    message.author.id, case, detect_dict)
+            # Send the message to the rep_ch channel
+            channel = self.get_channel(rep_ch)
+            await channel.send(full_str)

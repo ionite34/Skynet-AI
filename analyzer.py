@@ -2,6 +2,8 @@ import os
 import json
 from warnings import warn
 from googleapiclient import discovery
+from collections import OrderedDict
+
 
 def get_client():
     return discovery.build(
@@ -10,7 +12,8 @@ def get_client():
         developerKey=os.environ['PERSPECTIVE_API_KEY'],
         discoveryServiceUrl=os.environ['SERVICE_URL'],
         static_discovery=False,
-    )  
+    )
+
 
 def get_attr():
     # Load json
@@ -30,9 +33,9 @@ class Analyzer:
         for attr in self.thresholds:
             self.attributes[attr] = {}
 
-    def __call__(self, text):      
+    def __call__(self, text):
         analyze_request = {
-            'comment': { 'text': text },
+            'comment': {'text': text},
             'requestedAttributes': self.attributes,
             'languages': ['en']
         }
@@ -47,7 +50,7 @@ class Analyzer:
 
         # Build map for {Response: Score}
         scores = res['attributeScores']
-        map = {}
+        scores_map = OrderedDict()
         exceeded = []
         for attribute in scores:
             try:
@@ -55,9 +58,11 @@ class Analyzer:
             except KeyError:
                 warn(f'Invalid Key while Parsing: [{text}]. Response: [{res}]')
                 return None
-            map[attribute] = confidence
+            scores_map[attribute] = confidence
             if confidence >= self.thresholds[attribute]:
                 exceeded.append(attribute)  # Add if over threshold
 
-        return exceeded, map
-        
+        # Sort by confidence
+        scores_map = sorted(scores_map.items(), key=lambda x: x[1], reverse=True)
+
+        return exceeded, scores_map
