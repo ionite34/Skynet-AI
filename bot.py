@@ -54,6 +54,18 @@ class BotClient(discord.Client):
         if not message.content:
             return
 
+        # Testing override
+        if message.content.startswith('%%6AAF7516A1933'):
+            # Test data
+            case = 'SPAM'
+            detect_dict = {'SPAM': 99.5, 'SEVERE_TOXICITY': 75.1}
+            rep_ch, full_str = self.reporter.report(message.guild, message.channel, message.id,
+                                                    message.author.id, case, detect_dict)
+            # Send the message to the rep_ch channel
+            channel = self.get_channel(rep_ch)
+            await channel.send(full_str)
+            return
+
         # Query
         detects, detect_dict = self.analyze(message.content)
 
