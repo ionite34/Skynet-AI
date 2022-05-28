@@ -35,8 +35,8 @@ class Reporter:
         if not db[guild_id].get(user_id):
             db[guild_id][user_id] = {}  # Create user entry
 
-        # Get the current time
-        current_time = datetime.now()
+        # Get the current time as string
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
 
         # Add report to user
         db[guild_id][user_id][msg_id] = [current_time, reason]
@@ -66,7 +66,8 @@ class Reporter:
             if self.time_limit_per_category and report[1] != reason:
                 continue
             # If report is within time limit, return True (Exists)
-            if current_time - report[0] < self.time_limit:
+            report_time = datetime.strptime(report[0], '%Y-%m-%d %H:%M:%S.%f')
+            if current_time - report_time < self.time_limit:
                 return True
 
     def _get_report_channel(self, guild_id):
