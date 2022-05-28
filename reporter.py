@@ -96,7 +96,11 @@ class Reporter:
         channel_id = parsed['data']['channel_id']  # Get channel ID
         return channel_id
 
-    def report(self, guild_id, channel_id, msg_id, user_id, reason, reason_dict):
+    def report(self, guild_id, channel_id, msg_id, user_id, msg_text, reason, reason_dict):
+        # Trim message if beyond 250 characters
+        if len(msg_text) > 250:
+            msg_text = msg_text[:247] + '...'
+
         # Converting to string
         guild_id = str(guild_id)
         channel_id = str(channel_id)
@@ -118,7 +122,8 @@ class Reporter:
         # Construct the report json
         mention = f'<@{self.report_bot_id}>'
         perc_reason = round(reason_dict[reason] * 100, 1)
-        report_msg = f"{reason} was detected with {perc_reason}% certainty.\n\n"
+        report_msg = f"{reason} was detected with {perc_reason}% certainty.\n"
+        report_msg += f"Message: {msg_text}\n\n"
         for attribute, prob in reason_dict.items():
             if prob < 0.3:
                 continue  # Skip low probability attributes

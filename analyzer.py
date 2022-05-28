@@ -48,10 +48,14 @@ class Analyzer:
             warn(f'Invalid Response: Text of [{text}] returned: [{res}]')
             return None
 
+        # Combo detect items
+        combined_detect = {'SEVERE_TOXICITY', 'IDENTITY_ATTACK', 'INFLAMMATORY', 'THREAT'}
+
         # Build map for {Response: Score}
         scores = res['attributeScores']
         scores_map = OrderedDict()
         exceeded = []
+        cb_exceed_15 = 0
         for attribute in scores:
             try:
                 confidence = scores[attribute]['summaryScore']['value']
@@ -61,6 +65,12 @@ class Analyzer:
             scores_map[attribute] = confidence
             if confidence >= self.thresholds[attribute]:
                 exceeded.append(attribute)  # Add if over threshold
+            if attribute in combined_detect and confidence > 0.15:
+                cb_exceed_15 += confidence
+
+        if cb_exceed_15 >= 0.75 and len(exceeded) == 0:
+            exceeded.append('MULTI_TOXICITY')
+            scores_map['MULTI_TOXICITY'] = cb_exceed_15
 
         # Sort by confidence
         scores_map = sorted(scores_map.items(), key=lambda x: x[1], reverse=True)

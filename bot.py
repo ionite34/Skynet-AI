@@ -62,7 +62,7 @@ class BotClient(discord.Client):
             print(f'Reporting: Guild {message.guild.id}, Channel {message.channel.id}, Msg ID {message.id},'
                   f' Author ID {message.author.id}, Case {case}, Case Dict {detect_dict}')
             to_rep = self.reporter.report(message.guild.id, message.channel.id, message.id,
-                                          message.author.id, case, detect_dict)
+                                          message.author.id, message.content, case, detect_dict)
             if not to_rep:
                 return
             rep_ch, full_str = to_rep
@@ -82,7 +82,7 @@ class BotClient(discord.Client):
                 continue
             # Otherwise, get the report channel and string
             to_rep = self.reporter.report(message.guild.id, message.channel.id, message.id,
-                                          message.author.id, case, detect_dict)
+                                          message.author.id, message.content, case, detect_dict)
             if not to_rep:
                 return
             rep_ch, full_str = to_rep
