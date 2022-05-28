@@ -2,6 +2,7 @@ import sys
 import subprocess
 import os
 import signal
+from replit import db
 from analyzer import Analyzer
 from bot_skynet import run
 
@@ -39,6 +40,10 @@ def api_test():
     analyze = Analyzer()
     res = analyze('Hello.')
     print(res)
+
+
+def clear_db():
+    db.clear()
 
 
 if __name__ == '__main__':
