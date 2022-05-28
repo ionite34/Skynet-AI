@@ -1,6 +1,7 @@
 import os
 from bot import BotClient
 
+
 def run():
     # Create bot
     skynet_bot = BotClient()

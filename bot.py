@@ -10,6 +10,7 @@ from reporter import Reporter
 # Role tag (AI)
 ROLE_AI_TAG = "<@&906973835138564116>"
 
+
 class BotClient(discord.Client):
     def __init__(self):
         super().__init__()
@@ -34,7 +35,6 @@ class BotClient(discord.Client):
         # send a request to the model without caring about the response
         # just so that the model wakes up and starts loading
         print(self.analyze('This is a self test.'))
-
 
     async def on_message(self, message):
         """
@@ -80,6 +80,6 @@ class BotClient(discord.Client):
                 prob = map[case]
                 prob = round(prob * 100, 1)
                 c_text = special_cases[case]
-                await message.reply(f'⚠️ Warning: Your Message was detected ' 
+                await message.reply(f'⚠️ Warning: Your Message was detected '
                                     f'as {c_text} with {prob}% Confidence.')
                 return
